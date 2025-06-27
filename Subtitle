@@ -1,8 +1,25 @@
 import time
-import datetime
+import tkinter as tk
 
 message = "By @คุณคุณดูดิ อันไหนดูไม่ได้ก็ข้ามไปอย่าฝืน! เสียเวลาเปล่า!"
 
+def show_auto_close_message(duration=60):
+    popup = tk.Tk()
+    popup.title("แจ้งเตือน")
+    popup.geometry("400x100+500+300")  # ขนาด + ตำแหน่งบนหน้าจอ
+    popup.resizable(False, False)
+
+    label = tk.Label(popup, text=message, font=("TH SarabunPSK", 16), wraplength=380, justify="center")
+    label.pack(expand=True, padx=20, pady=20)
+
+    # ตั้งเวลาให้ปิดเองหลังจากครบ duration วินาที
+    popup.after(duration * 1000, popup.destroy)
+    popup.mainloop()
+
+# ▶ แสดงทันที 1 นาที
+show_auto_close_message(duration=60)
+
+# ▶ จากนั้นแสดงใหม่ทุก 30 นาที
 while True:
-    print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {message}")
     time.sleep(30 * 60)
+    show_auto_close_message(duration=60)
