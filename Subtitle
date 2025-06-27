@@ -1,25 +1,41 @@
 import time
 import tkinter as tk
 
+import ctypes  # สำหรับดึงขนาดหน้าจอ (Windows-friendly)
+
 message = "By @คุณคุณดูดิ อันไหนดูไม่ได้ก็ข้ามไปอย่าฝืน! เสียเวลาเปล่า!"
 
 def show_auto_close_message(duration=60):
     popup = tk.Tk()
     popup.title("แจ้งเตือน")
-    popup.geometry("400x100+500+300")  # ขนาด + ตำแหน่งบนหน้าจอ
     popup.resizable(False, False)
+
+    # ขนาด popup
+    popup_width = 400
+    popup_height = 100
+
+    # ดึงขนาดหน้าจอ
+    user32 = ctypes.windll.user32
+    screen_width = user32.GetSystemMetrics(0)
+    screen_height = user32.GetSystemMetrics(1)
+
+    # คำนวณตำแหน่งให้ popup อยู่ "กึ่งกลางด้านล่าง"
+    x_position = int((screen_width - popup_width) / 2)
+    y_position = int(screen_height - popup_height - 50)  # ห่างจากล่าง 50 px
+
+    popup.geometry(f"{popup_width}x{popup_height}+{x_position}+{y_position}")
 
     label = tk.Label(popup, text=message, font=("TH SarabunPSK", 16), wraplength=380, justify="center")
     label.pack(expand=True, padx=20, pady=20)
 
-    # ตั้งเวลาให้ปิดเองหลังจากครบ duration วินาที
+    # ปิดอัตโนมัติเมื่อครบเวลา
     popup.after(duration * 1000, popup.destroy)
     popup.mainloop()
 
 # ▶ แสดงทันที 1 นาที
 show_auto_close_message(duration=60)
 
-# ▶ จากนั้นแสดงใหม่ทุก 30 นาที
+# ▶ วนลูปแสดงทุก 30 นาที
 while True:
     time.sleep(30 * 60)
     show_auto_close_message(duration=60)
